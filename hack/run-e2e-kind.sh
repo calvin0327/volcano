@@ -72,6 +72,18 @@ function generate-log {
     kubectl logs deployment/${CLUSTER_NAME}-scheduler -n ${NAMESPACE} > volcano-scheduler.log
 }
 
+function print-log {
+    local volcano_components=(admission controller scheduler)
+    
+    for component in ${volcano_components[@]}; do
+        if [[ -f volcano-${component}.log ]]; then
+            echo "Pirnting volcano-${component} logs..."
+            cat volcano-${component}.log
+            echo "---"
+        fi
+    done
+}
+
 # clean up
 function cleanup {
   uninstall-volcano
@@ -159,5 +171,6 @@ esac
 
 if [[ $? -ne 0 ]]; then
   generate-log
+  print-log
   exit 1
 fi
